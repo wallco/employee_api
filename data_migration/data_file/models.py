@@ -1,7 +1,9 @@
 from django.db import models
+from bulk_update_or_create import BulkUpdateOrCreateQuerySet
 # Create your models here.
 
 class HiredEmployee(models.Model):
+    objects = BulkUpdateOrCreateQuerySet.as_manager()
     # ids can't be null
     employee_id = models.IntegerField(null=False, blank=False)
     # It was not specified if the other fields could contain null values, so this may change
@@ -14,6 +16,7 @@ class HiredEmployee(models.Model):
         return self.employee_id
     
 class Department(models.Model):
+    objects = BulkUpdateOrCreateQuerySet.as_manager()
     # Ids can't be null
     department_id = models.IntegerField(null=False, blank=False)
     # it was not specified if the other fields could contain null values, so this may change
@@ -23,6 +26,7 @@ class Department(models.Model):
         return self.department_id
 
 class Job(models.Model):
+    objects = BulkUpdateOrCreateQuerySet.as_manager()
     # Ids can't be null
     job_id = models.IntegerField(null=False, blank=False)
     # it was not specified if the other fields could contain null values, so this may change
