@@ -32,7 +32,7 @@ class UploadView(View):
                 if job_id == '':
                     job_id = None
                 items.append(HiredEmployee(employee_id=employee_id, name=name, datetime=datetime, department_id = department_id, job_id = job_id))
-                HiredEmployee.objects.bulk_update_or_create(items, ['name', 'datetime','department_id', 'job_id'], match_field = 'employee_id', batch_size=1000)
+            HiredEmployee.objects.bulk_update_or_create(items, ['name', 'datetime','department_id', 'job_id'], match_field = 'employee_id', batch_size=1000)
         elif load_type == 'Submit Jobs':
             for row in rows:
                 list = row.split(',')
@@ -41,7 +41,7 @@ class UploadView(View):
                 if job == '':
                     job = None
                 items.append(Job(job_id = job_id, job = job))
-                Job.objects.bulk_update_or_create(items, ['job'], match_field = 'job_id')
+            Job.objects.bulk_update_or_create(items, ['job'], match_field = 'job_id')
         elif load_type == 'Submit Departments':
             for row in rows:
                 list = row.split(',')
@@ -50,7 +50,7 @@ class UploadView(View):
                 if department == '':
                     department = None
                 items.append(Department(department_id = department_id, department = department))
-                Department.objects.bulk_update_or_create(items, ['department'], match_field = 'department_id')
+            Department.objects.bulk_update_or_create(items, ['department'], match_field = 'department_id')
         else:
             pass
         return render(request, "index.html", {"form": UploadFile()})
