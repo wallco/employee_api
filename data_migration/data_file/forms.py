@@ -1,12 +1,8 @@
-from django.forms import FileField, Form, ModelForm
+from django.forms import FileField, Form, ChoiceField
 from .models import Product
 
+class FileType(Form):
+    file_type = ChoiceField(choices = ('Employees', 'Departments', 'Jobs'))
 
-class UploadEmployees(Form):
-    employee_file = FileField()
-
-class UploadJobs(Form):
-    job_file = FileField()
-
-class UploadDepartments(Form):
-    department_file = FileField()
+class UploadFile(Form):
+    file = FileField()

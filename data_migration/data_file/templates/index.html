@@ -6,9 +6,7 @@
             method="post"
         >
             {% csrf_token %}
-            {{ employee_form }}
-            {{ job_form }}
-            {{ department_form }}
+            {{ form }}
             <br/>
             <input type="submit" value="Submit">
         </form>
