@@ -21,5 +21,6 @@ from data_file.views import UploadView, HiringsView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('upload/', UploadView.as_view()),
-    path('hirings/', HiringsView.as_view())
+    path('hirings/', HiringsView.as_view()),
+    path('hirings_department/', HiringsView.as_view())
 ]

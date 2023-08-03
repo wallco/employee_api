@@ -58,25 +58,39 @@ class UploadView(View):
 class HiringsView(View):
     def get(self, request, *args, **kwargs):
         with connection.cursor() as cursor:
-            cursor.execute("""SELECT    d.department as Department, 
-                                        j.job as Job,
-                                        count(t1.employee_id) as Q1, 
-                                        count(t2.employee_id) as Q2, 
-                                        count(t3.employee_id) as Q3, 
-                                        count(t4.employee_id) as Q4
-                                    FROM data_file_hiredemployee t1
-                                    LEFT JOIN data_file_hiredemployee t2
-                                        on t1.department_id = t2.department_id and t1.job_id = t2.job_id and strftime('%Y', t2.datetime) = '2021' and strftime('%m', t2.datetime) in ('04','05','06')
-                                    LEFT JOIN data_file_hiredemployee t3
-                                        on t1.department_id = t3.department_id and t1.job_id = t3.job_id and strftime('%Y', t3.datetime) = '2021' and strftime('%m', t3.datetime) in ('07','08','09')
-                                    LEFT JOIN data_file_hiredemployee t4
-                                        on t1.department_id = t4.department_id and t1.job_id = t4.job_id and strftime('%Y', t4.datetime) = '2021' and strftime('%m', t4.datetime) in ('10','11','12')
-                                    LEFT JOIN data_file_department d
-                                        on t1.department_id = d.department_id
-                                    LEFT JOIN data_file_job j
-                                        on t1.job_id = j.job_id
-                                    WHERE strftime('%Y', t1.datetime) = '2021' AND strftime('%m', t1.datetime) in ('01','02','03')
-                                    GROUP BY 1, 2
-                                    ORDER BY 1, 2;""")
+            cursor.execute("""  with q1 as (select department_id, job_id, count(employee_id) as employee_count 
+                                from data_file_hiredemployee 
+                                where strftime('%Y', datetime) = '2021' and strftime('%m', datetime) in ('01', '02', '03') group by 1,2),
+                        q2 as (select department_id, job_id, count(employee_id) as employee_count 
+                                from data_file_hiredemployee 
+                                where strftime('%Y', datetime) = '2021' and strftime('%m', datetime) in ('04', '05', '06') group by 1,2),
+                        q3 as (select department_id, job_id, count(employee_id) as employee_count 
+                                from data_file_hiredemployee 
+                                where strftime('%Y', datetime) = '2021' and strftime('%m', datetime) in ('07', '08', '09') group by 1,2),
+                        q4 as (select department_id, job_id, count(employee_id) as employee_count 
+                                from data_file_hiredemployee 
+                                where strftime('%Y', datetime) = '2021' and strftime('%m', datetime) in ('10', '11', '12') group by 1,2)
+                    select distinct d.department, 
+                                    j.job, 
+                                    IFNULL(q1.employee_count, 0) as q1, 
+                                    IFNULL(q2.employee_count, 0) as q2, 
+                                    IFNULL(q3.employee_count, 0) as q3, 
+                                    IFNULL(q4.employee_count, 0) as q4
+                    from data_file_hiredemployee t0
+                    left join q1 q1 on (t0.department_id, t0.job_id) = (q1.department_id, q1.job_id)
+                    left join q2 q2 on (t0.department_id, t0.job_id) = (q2.department_id, q2.job_id)
+                    left join q3 q3 on (t0.department_id, t0.job_id) = (q3.department_id, q3.job_id)
+                    left join q4 q4 on (t0.department_id, t0.job_id) = (q4.department_id, q4.job_id)
+                    left join data_file_department d on t0.department_id = d.department_id
+                    left join data_file_job j on t0.job_id = j.job_id
+                    where not (q1.employee_count is null and q2.employee_count is null and q3.employee_count is null and q4.employee_count is null)
+                    order by 1,2""")
             hirings_2021 = cursor.fetchall()
         return render(request, "hirings.html", {"items": hirings_2021})
+    
+class HiringsDepView(View):
+    def get(self, request, *args, **kwargs):
+        with connection.cursor() as cursor:
+            cursor.execute("""""")
+            hirings_2021_dep = cursor.fetchall()
+        return render(request, "hirings_dep.html", {"items": hirings_2021_dep})
