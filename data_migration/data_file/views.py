@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views.generic.base import View
-from csv import DictReader
 from io import TextIOWrapper
 from .models import HiredEmployee, Job, Department
 from .forms import UploadFile
+from django.db import connection
 
 
 class UploadView(View):
@@ -54,4 +54,29 @@ class UploadView(View):
         else:
             pass
         return render(request, "index.html", {"form": UploadFile()})
-        
+    
+class HiringsView(View):
+    def get(self, request, *args, **kwargs):
+        with connection.cursor() as cursor:
+            cursor.execute("""SELECT    d.department as Department, 
+                                        j.job as Job,
+                                        count(t1.employee_id) as Q1, 
+                                        count(t2.employee_id) as Q2, 
+                                        count(t3.employee_id) as Q3, 
+                                        count(t4.employee_id) as Q4
+                                    FROM data_file_hiredemployee t1
+                                    LEFT JOIN data_file_hiredemployee t2
+                                        on t1.department_id = t2.department_id and t1.job_id = t2.job_id and strftime('%Y', t2.datetime) = '2021' and strftime('%m', t2.datetime) in ('04','05','06')
+                                    LEFT JOIN data_file_hiredemployee t3
+                                        on t1.department_id = t3.department_id and t1.job_id = t3.job_id and strftime('%Y', t3.datetime) = '2021' and strftime('%m', t3.datetime) in ('07','08','09')
+                                    LEFT JOIN data_file_hiredemployee t4
+                                        on t1.department_id = t4.department_id and t1.job_id = t4.job_id and strftime('%Y', t4.datetime) = '2021' and strftime('%m', t4.datetime) in ('10','11','12')
+                                    LEFT JOIN data_file_department d
+                                        on t1.department_id = d.department_id
+                                    LEFT JOIN data_file_job j
+                                        on t1.job_id = j.job_id
+                                    WHERE strftime('%Y', t1.datetime) = '2021' AND strftime('%m', t1.datetime) in ('01','02','03')
+                                    GROUP BY 1, 2
+                                    ORDER BY 1, 2;""")
+            hirings_2021 = cursor.fetchall()
+        return render(request, "hirings.html", {"items": hirings_2021})

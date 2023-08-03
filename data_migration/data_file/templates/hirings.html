@@ -1,0 +1,21 @@
+<table border="1">
+    <TR>
+        <TD class="c2">Department</TD>
+        <TD class="c3">Job</TD>
+        <TD class="c4">Q1</TD>
+        <TD class="c5">Q2</TD>
+        <TD class="c5">Q3</TD>
+        <TD class="c5">Q4</TD>
+     </TR>
+    {% for item in items %}
+    <TR>
+       <TD class="c2">{{item.0}}</TD>
+       <TD class="c3">{{item.1}}</TD>
+       <TD class="c4">{{item.2}}</TD>
+       <TD class="c5">{{item.3}}</TD>
+       <TD class="c5">{{item.4}}</TD>
+       <TD class="c5">{{item.5}}</TD>
+    </TR>
+    {% endfor %}
+    </table>
+    

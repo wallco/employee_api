@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from data_file.views import UploadView
+from data_file.views import UploadView, HiringsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('upload/', UploadView.as_view()),
+    path('hirings/', HiringsView.as_view())
 ]
