@@ -7,14 +7,20 @@ from django.db import connection
 
 
 class UploadView(View):
+    #Presents the upload form when accessed
     def get(self, request, *args, **kwargs):
         return render(request, "index.html", {"form": UploadFile()})
     
     def post(self, request, *args, **kwargs):
+        #Retrieves the identifier of which table is the data being uploaded to
         load_type = request.POST['type']
+        #Initializes row collection
         items = []
+        #Retrieves file and reads rows
         file = request.FILES["file"]
         rows = TextIOWrapper(file, encoding="utf-8", newline="")
+        #Controls the flow according to the data type, retrieves its corresponding attributes, constructing a Django Model object with them,
+        #appending to the items list and finally bulk-upserting when the loop ends
         if load_type == 'Submit Employees':
             for row in rows:
                 list = row.split(',')
@@ -53,9 +59,11 @@ class UploadView(View):
             Department.objects.bulk_update_or_create(items, ['department'], match_field = 'department_id')
         else:
             pass
+        #Returns the user to the same upload page
         return render(request, "index.html", {"form": UploadFile()})
     
 class HiringsView(View):
+    #Runs query and then passes the corresponding result to the table template
     def get(self, request, *args, **kwargs):
         with connection.cursor() as cursor:
             cursor.execute("""  with q1 as (select department_id, job_id, count(employee_id) as employee_count 
@@ -89,6 +97,7 @@ class HiringsView(View):
         return render(request, "hirings.html", {"items": hirings_2021})
     
 class HiringsDepView(View):
+    #Runs query and then passes the corresponding result to the table template
     def get(self, request, *args, **kwargs):
         with connection.cursor() as cursor:
             cursor.execute("""  with department_hires as (select department_id, count(employee_id)  as employee_count

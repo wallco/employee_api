@@ -1,7 +1,7 @@
 from django.db import models
 from bulk_update_or_create import BulkUpdateOrCreateQuerySet
-# Create your models here.
 
+#Model representing hired employee entities in the DB
 class HiredEmployee(models.Model):
     objects = BulkUpdateOrCreateQuerySet.as_manager()
     # ids can't be null
@@ -14,7 +14,8 @@ class HiredEmployee(models.Model):
 
     def __str__(self):
         return self.employee_id
-    
+
+#Model representing department entities in the DB  
 class Department(models.Model):
     objects = BulkUpdateOrCreateQuerySet.as_manager()
     # Ids can't be null
@@ -25,6 +26,8 @@ class Department(models.Model):
     def __str__(self):
         return self.department_id
 
+
+#Model representing job entities in the DB
 class Job(models.Model):
     objects = BulkUpdateOrCreateQuerySet.as_manager()
     # Ids can't be null
