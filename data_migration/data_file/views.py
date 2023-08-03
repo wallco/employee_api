@@ -91,6 +91,13 @@ class HiringsView(View):
 class HiringsDepView(View):
     def get(self, request, *args, **kwargs):
         with connection.cursor() as cursor:
-            cursor.execute("""""")
+            cursor.execute("""  with department_hires as (select department_id, count(employee_id)  as employee_count
+                                        from data_file_hiredemployee
+                                        where strftime('%Y', datetime) = '2021'
+                                        group by 1)
+                                select dh.department_id, d.department, dh.employee_count
+                                from department_hires dh
+                                inner join data_file_department d on d.department_id = dh.department_id
+                                where dh.employee_count > (select avg(employee_count) from department_hires)""")
             hirings_2021_dep = cursor.fetchall()
         return render(request, "hirings_dep.html", {"items": hirings_2021_dep})

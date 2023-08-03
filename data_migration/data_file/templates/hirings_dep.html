@@ -1,0 +1,15 @@
+<table border="1">
+    <TR>
+        <TD class="c1">Department ID</TD>
+        <TD class="c2">Department</TD>
+        <TD class="c3">Hired Employees</TD>
+     </TR>
+    {% for item in items %}
+    <TR>
+       <TD class="c1">{{item.0}}</TD>
+       <TD class="c2">{{item.1}}</TD>
+       <TD class="c3">{{item.2}}</TD>
+    </TR>
+    {% endfor %}
+    </table>
+    
